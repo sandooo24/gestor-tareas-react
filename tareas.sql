@@ -31,7 +31,7 @@ CREATE TABLE `tareas` (
   `id` int(11) NOT NULL,
   `titulo` varchar(500) NOT NULL,
   `descripcion` text NOT NULL,
-  `estado` varchar(500) NOT NULL,
+  `estado` varchar(500) NULL,
   `create_at` datetime NOT NULL DEFAULT current_timestamp(),
   `update_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `delete_at` datetime NOT NULL
