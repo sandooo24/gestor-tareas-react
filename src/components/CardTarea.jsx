@@ -1,10 +1,12 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import fetchApi from "./RequestApi";
 
 export default function CardTarea(dateTarea) {
     const data = dateTarea.dataTarea
 
     const deleteTarea = () =>{
-            Swal.fire({
+        Swal.fire({
             title: "Estas seguro de eliminar esta tarea?!!",
             icon: "warning",
             text: "¡¡No podras revertir esto!!!",
@@ -15,7 +17,18 @@ export default function CardTarea(dateTarea) {
             padding:'10px',
         }).then((result)=>{
             if (result.isConfirmed) {//Si Presiona el boton 'Si,eliminar!'
-                
+                // parametros de la peticion a la api
+                const optionsFetch = {
+                    method: 'DELETE',
+                    headers: { 
+                        'x-api-key': 'xdddddddddd'
+                    }
+                }
+
+                fetchApi(`tareas/delete/${data.id}`,optionsFetch).then(res => {
+                    console.log(":)")
+                    window.location='./'
+                })
             }//Si Presiona el boton 'Si,eliminar!'
         })
     }
@@ -29,9 +42,9 @@ export default function CardTarea(dateTarea) {
             </p>
             <div className="card-control">
                 {/* BOTON EDITAR */}
-                <button className="btn-edit">
+                <Link to={`/form-edit?id=${data.id}`} className="btn-edit">
                     <img src="./public/edit.svg" width="30" />
-                </button>
+                </Link>
 
                 {/* BOTON ELIMINAR */}
                 <button className="btn-delete" onClick={deleteTarea}> 

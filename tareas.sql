@@ -34,7 +34,7 @@ CREATE TABLE `tareas` (
   `estado` varchar(500) NULL,
   `create_at` datetime NOT NULL DEFAULT current_timestamp(),
   `update_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `delete_at` datetime NOT NULL
+  `delete_at` datetime NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --

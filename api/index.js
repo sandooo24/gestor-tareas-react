@@ -3,6 +3,7 @@ const mysql =require('mysql2');
 const api = express();
 require('dotenv').config();
 
+const checkApiKey = require('./middleware/checkApiKey.js');
 api.use(express.json());
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -19,6 +20,16 @@ db.connect((error)=>{
     console.log('Conexion exitosa');
 }); 
 
+api.use(express.json(), (req, res, next) => {
+
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+
+    next();
+
+});
+
 api.get('/',(request, results)=>{
     results.send(`
         <h1>Api con express</h1>
@@ -32,8 +43,8 @@ api.get('/',(request, results)=>{
 })
 
 // Trae todos las tareas
-api.get('/tareas', (request,results)=>{
-    db.query('SELECT * FROM tareas',(err,resultados)=>{
+api.get('/tareas', checkApiKey,(request,results)=>{
+    db.query('SELECT * FROM tareas WHERE delete_at IS NULL',(err,resultados)=>{
         if(err){
             results.status(500).json({message : err.message })
             return;
@@ -43,15 +54,31 @@ api.get('/tareas', (request,results)=>{
 
 });
 
+// Trae una tarea por su id
+api.get('/tareas/:id', checkApiKey,(request,results)=>{
+    const {id} = request.params
+
+    db.query('SELECT * FROM tareas WHERE delete_at IS NULL AND id=?',[id],(err,resultados)=>{
+        if(err){
+            results.status(500).json({message : err.message })
+            return;
+        }
+        results.json(resultados[0]);
+    });
+
+});
+
 // agrega una tarea
-api.post('/tareas/add',(request,results)=>{
+api.post('/tareas/add',checkApiKey,(request,results)=>{
     const {titulo,descripcion} = request.body;
+
     db.query('INSERT INTO tareas (titulo,descripcion) VALUES (?,?)',[titulo,descripcion],(err,resultados)=>{
         if(err){
             results.status(500).json({message : err.message })
             return;
         }
         results.status(201).json({
+            status: 200,
             msg: "Se agrego correctamente",
             id: resultados.insertId
         });
@@ -59,7 +86,7 @@ api.post('/tareas/add',(request,results)=>{
 })
 
 // modifica una tarea
-api.put('/tareas/update/:id', (request,results)=>{
+api.put('/tareas/update/:id', checkApiKey,(request,results)=>{
     const {titulo,descripcion} = request.body;
     const {id} = request.params
     db.query('UPDATE tareas SET titulo=?, descripcion=? WHERE id=?',[titulo,descripcion,id],(err,resultados)=>{
@@ -74,7 +101,7 @@ api.put('/tareas/update/:id', (request,results)=>{
 })
 
 // elimina una tarea
-api.delete('/tareas/delete/:id',(request,results)=>{
+api.delete('/tareas/delete/:id',checkApiKey,(request,results)=>{
     const {id} = request.params
     db.query('UPDATE tareas SET delete_at=CURRENT_TIMESTAMP WHERE id=?',[id],(err,resultados)=>{
         if(err){

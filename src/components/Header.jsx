@@ -19,16 +19,8 @@ export default function Header() {
     return(<>
         <header className="navbar">
             <Link className="navbar-logo" to="/">
-                <h2>tasuku</h2>
+                <h2>Gestor de tareas</h2>
             </Link>
-            <button onClick={btnClick} className="btn-menu">
-                <img src="../../public/icon/menu.svg" />
-            </button>
-            <ul className="ul">
-                <li>
-                    <Link to="/">Inicio</Link>
-                </li>
-            </ul>
         </header>
     </>)
 }
