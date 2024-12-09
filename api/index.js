@@ -1,3 +1,4 @@
+const urlFront = 'http://localhost:5173' // url del frontend
 const express = require('express');
 const mysql =require('mysql2');
 const api = express();
@@ -5,6 +6,7 @@ require('dotenv').config();
 
 const checkApiKey = require('./middleware/checkApiKey.js');
 api.use(express.json());
+
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -22,7 +24,7 @@ db.connect((error)=>{
 
 api.use(express.json(), (req, res, next) => {
 
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+    res.setHeader('Access-Control-Allow-Origin', urlFront);
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.setHeader('Access-Control-Allow-Headers', '*');
 

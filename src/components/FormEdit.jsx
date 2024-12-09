@@ -12,6 +12,41 @@ export default function FormEdit(){
         window.location.href='./'
     }
 
+    // funcion para enviar peticion a la api y modificar una tarea
+    const editTarea = async (e) => {
+        e.preventDefault()// le quita el evento por defecto al formulario
+
+        const form = Object.fromEntries(new FormData(e.target))// almacena los valores del formulario
+
+        // parametros de la peticion a la api
+        const optionsFetch = {
+            method: 'PUT',
+            headers: { 
+                'Content-Type': 'application/json',
+                'x-api-key': 'xdddddddddd'
+            },
+            body: JSON.stringify(form)
+        }
+
+        // peticion a la api
+        const response = await fetchApi(`tareas/update/${search}`,optionsFetch)
+
+        // si agrega correctamente
+        if(response.status == 200){
+            Swal.fire({
+                title: response.msg,
+                icon: 'success',
+                showConfirmButton: false,
+                padding: '1rem',
+                timer: 1000,
+                timerProgressBar: true,
+            }).then( res => {
+                window.location = './'
+            })
+        }
+        console.log(response)
+    }
+
     const [titu,setTitu] = useState("")
     const [desc,setDesc] = useState("")
 
@@ -39,7 +74,7 @@ export default function FormEdit(){
         <Header/>
 
         <div className="section">
-            <form className="form" >
+            <form className="form" onSubmit={editTarea}>
                 <Link to="/">
                     <img src="./public/arrow_back.svg" className="btn-volver" />    
                 </Link>
